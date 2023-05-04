@@ -1,0 +1,579 @@
+    /*************************************
+ * TITLE: Maxis EBD Screen Stylesheet  		 *
+ * URI  : ebd-cts-screen.css 	 *
+ * MODIF: 							 *
+ *************************************/
+
+/* ##### Common Styles ##### */
+
+body {
+    color: black;
+    background-color: rgb( 240, 240, 240 );
+    font-family: verdana, helvetica, arial, sans-serif;
+    font-size: 71%; /* Enables font size scaling in MSIE */
+    padding: 0;
+    margin: 0 1% 1% 1%;
+    border: 1px solid rgb( 153, 153, 153 );
+}
+
+.HB1 {
+    color: black;
+    font-family: verdana, helvetica, arial, sans-serif;
+    font-size: 11; /* Enables font size scaling in MSIE */
+    padding: 0;
+    margin: 0 0 0 0;
+}
+
+html > body { font-size: 8.5pt;}
+
+.noscript {  /* If Script is disabled by user */
+    color:red;
+    font-weight:bold;
+}
+
+a {
+    color: rgb( 0, 0, 102 );
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a img {
+    border: none;
+}
+
+acronym, .titleTip {
+    border-bottom: 1px dotted rgb( 153, 153, 153 );
+    cursor: help;
+    margin: 0;
+    padding: 0 0 0.4px 0;
+}
+
+.doNotDisplay {
+    display: none;
+}
+
+.smallCaps {
+    font-size: 110%;
+    font-variant: small-caps;
+}
+
+/* ##### Header ##### */
+div#header {
+    width:100%;
+}
+
+.midHeader {
+    color: rgb( 39, 78, 144 ); /*background-color: rgb(140,170,230);*/
+    background-color: rgb( 255, 255, 255 );
+    height: 100px;
+}
+
+#ebd-text {
+    float: left;
+    position: relative;
+    top: 15px; /*background-image: url( "../images/ebd-text.gif" );*/
+}
+
+#maxis-logo {
+    position: relative;
+    float: right;
+    top: 25px;
+    padding-right: 5px; /*background-image: url( "../images/maxis-logo.gif" );*/
+}
+
+.headerTitle {
+    font-size: 337%;
+    font-weight: normal;
+    margin: 0 0 0 4mm;
+    padding: 0.25ex 0;
+}
+
+.subHeader {
+    color: rgb( 255, 255, 255 );
+    background-image: url( ../images/bg_menu.gif );
+    margin: 0;
+    padding: 1ex;
+    text-align: right;
+}
+
+.subHeader .right {
+    position: absolute;
+    right: 1.5mm;
+}
+
+.subHeader a {
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0;
+    padding: 0 0.75ex 0 0.5ex;
+}
+
+.subHeader a:hover {
+    text-decoration: underline;
+}
+
+.subHeader .highlight {
+    color: #14B320;
+    background-color: transparent;
+}
+
+/* ##### Side Bar ##### */
+
+#side-bar {
+    width: 20em;
+    float: left;
+    clear: left;
+    border-right: 1px solid rgb( 153, 153, 153 ); /*border-bottom: 1px solid rgb(153,153,153);*/
+}
+
+.sideBarTitle {
+    font-weight: bold;
+    margin: 0 0 1em 1em;
+    padding: 1em 0 0 0;
+}
+
+.lighterBackground {
+    color: inherit;
+    background-color: rgb( 255, 255, 255 );
+}
+
+/* ##### Main Copy ##### */
+
+#main-copy {
+    color: black;
+    background-color: rgb( 255, 255, 255 );
+    text-align: justify;
+    line-height: 1.5em;
+    margin: 0 0 0 20em;
+    padding: 0.5mm 5mm 5mm 5mm;
+    border-left: 1px solid rgb( 153, 153, 153 );
+}
+
+#main-copy p {
+    margin: 1em 1ex 2em 1ex;
+    padding: 0;
+}
+
+#main-copy a {
+    color: rgb( 0, 0, 102 );
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+#main-copy a:hover {
+    text-decoration: none;
+}
+
+#main-copy h1 {
+    color: rgb( 255, 255, 255 ); /*background-color: rgb(100,135,220);*/
+    background-image: url( ../images/header_green.gif );
+    font-size: 100%;
+    font-weight: bold;
+    margin: 3em 0 0 0;
+    padding: 0.5ex 0 0.5ex 1ex;
+}
+
+#main-copy h2 {
+    color: rgb( 0, 0, 102 ); /*background-color: rgb(100,135,220);*/
+    font-size: 150%;
+    font-weight: bold;
+}
+
+#main-copy h3 {
+    color: rgb( 0, 0, 102 ); /*background-color: rgb(100,135,220);*/
+    font-size: 125%;
+    font-weight: bold;
+}
+
+#main-copy .topOfPage {
+    color: rgb( 255, 255, 255 );
+    background-color: transparent;
+    font-size: 91%;
+    font-weight: bold;
+    text-decoration: none;
+    margin: 2.5ex 1ex 0 0; /* For MSIE */
+    padding: 0;
+    float: right;
+}
+
+#main-copy > .topOfPage {
+    margin: 2.75ex 1ex 0 0; /* For fully standards-compliant user agents */
+}
+
+/* ##### Footer ##### */
+
+#footer {
+    color: rgb( 0, 0, 102 );
+    background-color: transparent;
+    font-size: 91%;
+    margin: 0;
+    padding: 1em 2.5mm 2.5ex 2.5mm;
+    clear: both;
+    border-top: 1px solid rgb( 153, 153, 153 );
+}
+
+#footer .left {
+    line-height: 1.45em;
+    float: left;
+    clear: left;
+}
+
+#footer .right {
+    text-align: right;
+    line-height: 1.45em;
+}
+
+/* table */
+
+table {
+    color: black;
+    /*font-size: 100%;*/
+    font-weight: normal;
+    margin: 0 0 0 0;
+    border-spacing: 1px;
+    border: 1px solid rgb( 153, 153, 153 );
+    width: 100%;
+}
+
+table tr th, table tr td {
+    padding: 2px 4px 2px 4px !important;
+    text-align: left;
+    vertical-align: top;
+}
+
+div.header {
+    background-image: url( ../images/header_green.gif );
+    color: rgb( 255, 255, 255 ) !important;
+    /*font-size: 100%;*/
+    font-weight: bold;
+    margin: 1em 0 0 0;
+    padding: 0.5ex 1ex 0.5ex 1ex;
+    height: 18px;
+    overflow:visible;
+}
+
+div.header a {
+    color: rgb( 255, 255, 255 ) !important;
+    text-decoration: none !important;
+}
+
+div.header .right {
+    float: right;
+}
+
+div.header .left {
+    float: left;
+}
+
+div#fixed-page {
+    height: 600px;
+    background-color: white;
+}
+
+div#login {
+    width: 30%;
+    position: absolute;
+    top: 30%;
+    left: 35%;
+    display: table-cell;
+}
+
+/* ### Data table ### */
+
+table.data {
+    width:100%;
+}
+
+table.data thead tr {
+    background-color:  #e3e3e3; /* New color*/
+    color: rgb( 0, 0, 102 );
+}
+
+table.data tr.odd {
+    background-color: #F0F0F0;
+}
+
+table.data tr.even {
+    background-color: rgb( 255, 255, 255 );
+}
+
+table.data tbody tr:hover {
+    background-color: #ACAAAD;
+    color: rgb( 255, 255, 255 )
+}
+
+table.data tbody tr:hover a {
+    background-color: rgb( 255, 255, 255 )
+}
+
+table.data .action {
+    width: 10%;
+    text-align: center;
+    vertical-align: middle;
+    white-space:nowrap;
+}
+
+table.data th.sorted a, table.data th.sortable a {
+    background-repeat: no-repeat;
+    background-position: right;
+    display: block;
+    width: 100%;
+}
+
+table.data th.sortable a {
+    background-repeat: no-repeat;
+    background-image: url( ../images/arrow_off.png );
+}
+
+table.data th.order1 a {
+    background-repeat: no-repeat;
+    background-image: url( ../images/arrow_down.png );
+}
+
+table.data th.order2 a {
+    background-repeat: no-repeat;
+    background-image: url( ../images/arrow_up.png );
+}
+
+table.data tr.total {
+    /*background-image: url( ../images/grey_bar.png );*/
+    color: rgb( 0, 0, 102 );
+    font-weight:bold;
+    font-style:italic;
+}
+
+table.data tr.total td.action {
+    border:1px solid #ACAAAD;
+}
+
+table.data tr.total:hover, table.data tr.subtotal:hover {
+    background-image:none;
+    background-color: #ACAAAD;
+    color: rgb( 255,255,255)
+}
+
+table.message, table.error {
+    border: 0 !important;
+    /*font-size: 100% !important;*/
+    padding: 3px;
+}
+
+table.message {
+    color: rgb( 0, 0, 102 );
+    font-weight: normal;
+}
+
+table.error {
+    color: red;
+    font-weight: normal;
+}
+
+div.dataExport {
+    float: right;
+    margin: 3ex 0;
+    background-color: #F0F0F0;
+    border: dotted black 1px;
+    text-align: center;
+}
+
+div.exportlinks {
+    float: right;
+    margin: 1em 0;
+    background-color: #F0F0F0; /*background-image:url(../images/grey_bar.png);*/
+    border: dotted black 1px;
+    padding: 2px 4px;
+
+}
+
+div.exportlinks a {
+    text-decoration: none;
+}
+
+span.export {
+    padding: 0 4px 1px 20px;
+    display: inline;
+    cursor: pointer;
+    background-repeat: no-repeat;
+}
+
+span.excel {
+    background-image: url( ../images/ico_file_excel.png );
+}
+
+span.csv {
+    background-image: url( ../images/ico_file_csv.png );
+}
+
+span.xml {
+    background-image: url( ../images/ico_file_xml.png );
+}
+
+span.pdf {
+    background-image: url( ../images/ico_file_pdf.png );
+}
+
+span.rtf {
+    background-image: url( ../images/ico_file_rtf.png );
+}
+
+span.spacer {
+    clear: both;
+}
+
+/* *#### Form elements */
+
+form {
+    border: 0px solid rgb( 153, 153, 153 );
+    width: 100%;
+    border-spacing: 1px;
+    margin: 0;
+}
+
+table.form tr th {
+    width: 25%;
+    color: rgb( 0, 0, 102 );
+    background-color: rgb( 240, 240, 240 );
+    font-weight: normal;
+}
+
+table.form td, table.form th {
+    border: 0 solid rgb( 153, 153, 153 );
+}
+
+table.search {
+    padding: 1em 0; /*background-color: rgb( 240, 240, 240 );*/
+}
+
+table.search tr td {
+    width: 25% !important;
+}
+
+table.search input, table.search select {
+    width: 90% !important;
+}
+
+div.buttons {
+    margin: 0.75em 0 0 0.5em;
+    text-align: left;
+    padding: 2px 4px;
+}
+
+input.button {
+    color: rgb( 0, 0, 102 );
+    background-image: url( ../images/bg_menu.gif );
+    border: 1px solid rgb( 153, 153, 153 );
+    border-top: 0 !important;
+    padding: 1px 4px;
+    margin: 0;
+}
+
+input, select, textarea {
+    border: 1px solid rgb( 153, 153, 153 );
+}
+
+input.text {
+    width: 60%;
+}
+
+input.checkbox {
+    border: 0;
+}
+
+input.readonly {
+    background: #eee none !important;
+    color: #222 !important;
+    font-style: italic !important;
+}
+
+select {
+    width: 60% !important;
+}
+
+textarea {
+    height: 10em;
+}
+
+.mandatory {
+    background-color: #a3d982;
+}
+
+.width-3 {
+    width:3% !important;
+}
+
+.width-5 {
+    width:5% !important;
+}
+
+.width-10 {
+    width:10% !important;
+}
+
+.width-15{
+    width:15% !important;
+}
+
+.width-20 {
+    width:20% !important;
+}
+
+.width-25 {
+    width:25% !important;
+}
+
+.width-30 {
+    width:30% !important;
+}
+
+.width-35 {
+    width:35% !important;
+}
+
+.width-45 {
+    width:45% !important;
+}
+
+.width-50 {
+    width:50% !important;
+}
+
+.width-60 {
+    width: 60% !important;
+}
+
+.displayfont { font-family: Verdana; font-size: 8pt; font-style: normal; color: #000000 }
+.displayboldfont2 { font-family: Verdana; font-size: 10px; font-style: normal; font-weight: bold; color: #000000 }
+
+
+    .textbox {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: normal;
+	background-color: #FFFFFF;
+	color: #000000;
+	border: 1px solid #9AC0CD;
+}
+
+.myfont2 {
+	background-color: #FFFFFF; /* New color*/
+	color: #000000;
+	text-align: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.myfont3 {
+	background-color: lightgray; /* New color*/
+	color: #000000;
+	text-align: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+    font-weight: bold;
+	white-space: nowrap;
+    }

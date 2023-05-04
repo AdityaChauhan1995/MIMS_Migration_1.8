@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MaxisEbdPortal">
+
+<!-- Result maps describe the mapping between the columns returned
+   from a query, and the class properties.  A result map isn't
+   necessary if the columns (or aliases) match to the properties
+   exactly. 
+-->
+
+<select id="select_EbdPortalMims" resultClass="com.maxis.db.MaxisEbdPortal">
+SELECT DISTINCT phoneorder2_.Order_NO AS orderNo, this_.REG_ID AS regId, this_.EAS_MASTER_REG_ID as easMasterRegId, this_.CUST_ID AS custId, this_.CUST_BRN_NO AS custBrn,
+this_.REG_DATE_APPROVED AS regDateApproved, transmsisd4_.ONSITE_FULLFILLMENT AS onSiteFullfillment,
+transmsisd4_.IDD_ERR_MSG AS iddErrMsg,
+(SELECT a.DEALER_NAME FROM PORTAL_REF_DEALER a WHERE a.DEALER_CODE = this_.DEALER_CODE) AS dealerName,
+customerin1_.COMPANY_NAME AS companyName, customerin1_.CONTACT_NO_FIX as contactNoFix, phoneorder3_.PHONE_TOPUP_AMOUNT AS topupAmount,phoneorder3_.IPHONE_TOPUP AS iTopupAmount,
+customerin1_.CUSTNAME AS custName,
+customerin1_.new_ic AS newIc,
+transmsisd4_.TRANS_MSID AS transMsid, SUBSTR(phoneorder3_.VERIFIED_REMARK, 0, 250) as verifiedRemark,
+transmsisd4_.BILL_ADDR1 AS billAdd1,
+transmsisd4_.BILL_ADDR2 AS billAdd2,
+transmsisd4_.BILL_ADDR3 AS billAdd3,
+transmsisd4_.BILL_STATE AS billState, transmsisd4_.IMEI_COMPONENT as imeiCompt,
+transmsisd4_.BILL_POSTCODE AS billPostcode,
+transmsisd4_.BILL_COUNTRY AS billCountry,
+LENGTH(phoneorder3_.DEL_ADDR1) AS del1Length,
+LENGTH(phoneorder3_.DEL_ADDR2) AS del2Length,
+phoneorder3_.DEL_ADDR1 AS delAdd1,
+phoneorder3_.DEL_ADDR2 AS delAdd2,
+phoneorder3_.DEL_ADDR3 AS delAdd3,
+phoneorder3_.DEL_COUNTRY AS delCountry,
+(Select state from ebd_ref_postcode where postcode=phoneorder3_.DEL_POSTCODE) AS delState,
+phoneorder3_.DEL_POSTCODE AS delPostcode,
+phoneorder3_.DEL_COUNTRY AS delCountry,
+phoneorder3_.PHONE_SUBSIDY_AMOUNT AS phoneSubsidyAmount,
+phoneorder3_.IPHONE_SUBSIDY AS iPhoneSubsidyAmount,
+customerin1_.DEL_CONTACT_NAME AS delContactName,
+customerin1_.DEL_CONTACT_IC AS delContactIc,
+customerin1_.DEL_CONTACT_PHONE_NO AS delContactPhoneNo,
+customerin1_.DEL_CONTACT_EMAIL AS primaryContactEmail, 
+customerin1_.SECONDARY_PIC_NAME AS secondaryPicName,
+customerin1_.SECONDARY_PIC_EMAIL AS secondaryPicEmail ,
+customerin1_.SECONDARY_PIC_CONTACT_NO AS secondaryContactMobileNo ,
+customerin1_.SECONDARY_PIC_CONTACT_FIX_NO AS secondaryContactFixedNo ,
+customerin1_.SECONDARY_PIC_IC AS secondaryPicIc,
+(SELECT DISTINCT  a.PHONE_STATUS_NAME FROM PORTAL_REF_PHONE_STATUS a WHERE a.PHONE_STATUS_ID = phoneorder3_.delivery_status_Id) AS phoneOrderStatus,
+phoneorder3_.Device_Id AS deviceId,
+this_.REG_TYPE AS regType,
+transmsisd4_.msisdn_no AS msisdn, transmsisd4_.promotion_id AS promoId,
+(SELECT ms.account_no  FROM PORTAL_TRANS_MSISDN ms WHERE ms.reg_id = this_.reg_id AND ms.trans_msid = phoneorder3_.trans_msid) AS accountNo,
+phoneorder3_.CREATE_REMARK AS createRemarks, phoneorder3_.PHONE_UNIT_PRICE AS unitPrice, phoneorder3_.imei AS imei,
+rateplanRef.rateplan AS rateplan, rateplanRef.RATEPLAN_COMPONENT_ID AS rateplanComponentId, rateplanRef.RATEPLAN_PENALTY_COMPONENT_ID AS rateplanPenaltyComponentId,
+(SELECT a.NAME FROM EBD_REF_MARKET a WHERE a.market_id=transmsisd4_.market_id) AS marketType,
+(select virtual_service_no from portal_ref_Eas_registration a where a.eas_master_reg_id=this_.eas_master_reg_id) as virtualServiceNumber         
+FROM PORTAL_REGISTRATION_MASTER this_, PORTAL_CUST_INFO customerin1_, PORTAL_TRANS_PHONE_ORDER_REG phoneorder2_,
+PORTAL_TRANS_PHONE_ORDER phoneorder3_, PORTAL_TRANS_MSISDN transmsisd4_, PORTAL_REF_RATEPLAN rateplanRef
+WHERE this_.CUST_ID=customerin1_.CUST_ID AND this_.REG_ID=phoneorder2_.REG_ID
+AND phoneorder2_.Order_NO=phoneorder3_.Order_NO
+AND this_.REG_ID=transmsisd4_.reg_id
+AND  transmsisd4_.TRANS_MSID = phoneorder3_.TRANS_MSID
+AND (phoneorder3_.vendor_Id=7 AND transmsisd4_.ONSITE_FULLFILLMENT='N')
+AND phoneorder3_.delivery_status_Id=7
+AND this_.REG_STATUS in('A','PSP','PC','FSP','CSP')
+AND transmsisd4_.rateplan_id = rateplanRef.rateplan_id
+AND phoneorder3_.MIMS_STATUS IS NULL
+AND transmsisd4_.market_id IN (33, 43, 44, 38,47)
+ORDER BY this_.reg_id DESC
+</select>
+
+<select id="select_EbdPortalDevice" resultClass="com.maxis.db.DeviceData" >
+SELECT refDevice.DEVICE_NAME as deviceName,
+refDevice.MIMS_DEVICE_ID as mimsDeviceId,
+refDevice.MIMS_COLOR_ID as mimsColorId
+FROM portal_trans_phone_order phoneOrder,
+  PORTAL_REF_DEVICE_NAME refDevice
+WHERE phoneOrder.ORDER_NO=#orderNo#
+AND phoneOrder.DEVICE_ID =refDevice.DEVICE_ID
+</select>
+
+<select id="select_EbdPortalFlexiFundDevice" resultClass="com.maxis.db.DeviceData" >
+SELECT refDevice.DEVICE_NAME as deviceName,
+refDevice.MIMS_DEVICE_ID as mimsDeviceId,
+refDevice.MIMS_COLOR_ID as mimsColorId
+FROM portal_trans_phone_order phoneOrder,
+  portal_ref_eas_device refDevice
+WHERE phoneOrder.ORDER_NO=#orderNo#
+AND phoneOrder.DEVICE_ID =refDevice.DEVICE_ID
+</select>
+
+<update id="update_EbdPortalMimsSuccess" parameterClass="com.maxis.db.MaxisEbdPortal"   >
+     update PORTAL_TRANS_PHONE_ORDER set MIMS_STATUS = 'S', MIMS_SUBMIT_DATE = sysdate, DELIVERY_STATUS_ID = 2, DEVICE_ORDER_NO= #deviceOrderNo#, DELIVERY_DATETIME = sysdate, DATE_MODIFIED = sysdate where ORDER_NO = #orderNo#
+</update>
+
+<update id="update_EbdPortalMimsSuccess_M" parameterClass="com.maxis.db.MaxisEbdPortal"   >
+     update PORTAL_TRANS_PHONE_ORDER set MIMS_STATUS = 'M', MIMS_SUBMIT_DATE = sysdate, DATE_MODIFIED = sysdate where ORDER_NO = #orderNo#
+</update>
+
+<update id="update_EbdPortalMimsFail" parameterClass="com.maxis.db.MaxisEbdPortal"   >
+     update PORTAL_TRANS_MSISDN set IDD_ERR_MSG = 'F', DATE_MODIFIED = sysdate where REG_ID = #regId# and TRANS_MSID = #transMsid#
+</update>
+<select id="select_globalConfig" resultClass="com.maxis.db.GlobalConfig">
+select PARAMETER_ID as iParamID,PARAMETER_VALUE as strParameterValue,PARAMETER_NAME as strParameterName from PORTAL_GLOBAL_CONFIGURATION
+</select>
+
+<select id="select_custInfo" resultClass="com.maxis.db.CustomerInfo">
+select CUST_ID as custId,COMPANY_NAME as companyName,BILL_ADDR1 as billAddr1,BILL_ADDR2 as billAddr2,BILL_ADDR3 as billAddr3,BILL_POSTCODE as billPostcode,BILL_COUNTRY as billCountry,PIC_PHONE_NO as picPhoneNo,PIC_NAME as picName,DEL_CONTACT_PHONE_NO as delContactPhoneNo from PORTAL_CUST_INFO  where CUST_ID =#custId#
+</select>
+
+<select id="select_custInfo1" resultClass="com.maxis.db.PortalRegistrationMaster">
+SELECT ACCT_MGR_CODE as accMgrCode,cust_brn_no as custBrnNo,market_code as marketCode,account_no as accountNo,collect_code as collectCode,reg_id as regId,HIER_ID as hireId,parent_id as parentId,dealer_code as dealerCode FROM PORTAL_REGISTRATION_MASTER WHERE REG_ID = #regId#
+</select>
+
+<select id = "select_custInfo1Acc" resultClass="com.maxis.db.CustomerInfo">
+select DEALER_CODE as acctManagerDealerCode,ACCT_MGR_ID as accMgrCode from acct_mgr_ref where ACCT_MGR_ID=#accMgrCode#
+</select>
+
+<update id="update_PortalTransTask" parameterClass="com.maxis.db.Task">
+     update PORTAL_TRANS_TASK set TASK_ID=#taskId#,OWNER_ROLE_ID=#ownerRoleId#,MODIFIED_BY=#modifiedBy#,MODIFIED_DATETIME=#modifiedDatetime#,STATUS=#status# where TRANS_MSID=#transMsid# and TASK_ID=#taskIdCompare#
+</update>
+<update id="update_PortalTransMsisdn" parameterClass="com.maxis.db.TransMsisdn">
+     update PORTAL_TRANS_MSISDN set WS_STATUS=#wsStatus#,ERR_MSG=#errMsg#,DATE_MODIFIED=#dateModified# where REG_ID=#regId#
+</update>
+
+<update id="update_PortalTransServiceAttribute" parameterClass="com.maxis.db.TransServiceAttribute">
+     update PORTAL_TRANS_SERVICE_ATTRIBUTE set TASK_ID=#taskId# where TRANS_MSID=#transMsid#
+</update>
+
+<insert id="insert_PortalTransServiceAttribute" parameterClass="com.maxis.db.TransServiceAttribute">
+        insert into PORTAL_TRANS_SERVICE_ATTRIBUTE (ID,TRANS_MSID, MAP_ID, TASK_ID, VALUE, HEADER_NAME)
+        values ( #id#,#transMsid#, #mapId#, #taskId#,#headerValue#,#headerName#)
+</insert>
+
+<select id="select_MaxIDServiceAttribute" resultClass="com.maxis.db.TransServiceAttribute">
+     select PORTAL_TRANS_SERVICE_ATTR.nextval as IdSequence from dual
+</select>
+
+ <insert id="insert_PortalTransTask" parameterClass="com.maxis.db.Task">
+        insert into PORTAL_TRANS_TASK (TASK_INSTANCE_ID, REG_ID,TRANS_MSID, TASK_ID, OWNER_ROLE_ID, CREATED_BY,CREATED_DATE,STATUS)
+        values (#taskInstanceId#, #regId#, #transMsid#,#taskId#,#ownerRoleId#,#createdBy#,#createdDate#,#status#)
+ </insert>
+
+<select id="select_MaxInstanceIsPortalTransTask" resultClass="com.maxis.db.Task">
+     select PORTAL_TRANS_TASK_INSTANCE.nextval as maxInstanceIdSeq FROM dual
+</select>
+
+
+<select id="select_TransMsisdn" resultClass="com.maxis.db.TransMsisdn">
+ 	SELECT TRANS_MSID as transMsid FROM PORTAL_TRANS_MSISDN WHERE MSISDN_NO=#msisdnNo#
+</select>
+<select id="select_accNo" resultClass="com.maxis.db.PortalRegistrationMaster">
+     SELECT REG_ID as regId,ACCOUNT_NO as accountNo FROM PORTAL_REGISTRATION_MASTER where REG_ID=#regId#
+</select>
+<select id="select_IccidMsisdnImei" resultClass="com.maxis.db.IccidMsisdnImeiMap">
+     SELECT ICCID as iccid,MSISDN as msisdn,IMEI as imei FROM PORTAL_ICCID_MSISDN_IMEI_MAP WHERE IMEI = #imei#
+</select>
+
+<select id="select_TransServiceAttributeMap" resultClass="com.maxis.db.TransServiceAttributeMap">
+     SELECT MAP_ID as mapId,PRD_REG_GROUP_MAP_ID as prdRegGroupMapId,HEADER_NAME as headerName FROM PORTAL_SERVICE_ATTRIBUTE_MAP WHERE PRD_REG_GROUP_MAP_ID = #prdRegGroupMapId# and HEADER_NAME= #headerName# and TASK_ID = #taskId#
+</select>
+
+<select id="select_TaskMaster" resultClass="com.maxis.db.TaskMaster">
+     SELECT TASK_ID as taskId,OWNER_ROLE_ID as ownerRoleId,PROD_REG_GRP_MAP_ID as prodRefGrpMapId,IS_TERMINAL as isTerminal, SEQUENCE as sequenceNo FROM PORTAL_TASK_MASTER WHERE PROD_REG_GRP_MAP_ID = #prodRefGrpMapId# AND IS_TERMINAL = #isTerminal# AND SEQUENCE = #sequenceNo#
+</select>
+<select id="select_StatusOfMegafortrisTask" resultClass="com.maxis.db.Task">
+select OWNER_ROLE_ID as ownerRoleId,TASK_ID as taskId,STATUS as status,TRANS_MSID as transMsid from PORTAL_TRANS_TASK where OWNER_ROLE_ID=#ownerRoleId# and TASK_ID=#taskId# and TRANS_MSID=#transMsid#
+</select>
+
+<select id="select_prodRegGrpMapId" resultClass="com.maxis.db.PortalRegistrationMaster">
+     SELECT CUST_ID as custId,PROD_REG_GRP_MAP_ID as prodRegGrpMapId,REG_ID as regId,PRODUCT_GROUP_ID as prodGrpId,BILL_IND as billInd FROM PORTAL_REGISTRATION_MASTER WHERE REG_ID = #regId#
+</select>
+
+<select id ="select_phoneOrder" resultClass="com.maxis.db.PhoneOrder" >
+	SELECT ORDER_NO as orderNo,DEVICE_ORDER_NO as deviceOrderNo FROM PORTAL_TRANS_PHONE_ORDER WHERE DEVICE_ORDER_NO = #deviceOrderNo#
+</select>
+
+<select id ="select_transMsid" resultClass="com.maxis.db.PhoneOrder" >
+	SELECT TRANS_MSID as transMsid,ORDER_NO as orderNo FROM PORTAL_TRANS_PHONE_ORDER WHERE ORDER_NO = #orderNo#
+</select>
+<select id="select_taskIdUnique" resultClass="com.maxis.db.Task">
+select TASK_ID as taskId,TRANS_MSID as transMsid,OWNER_ROLE_ID as ownerRoleId from PORTAL_TRANS_TASK where TRANS_MSID = #transMsid# and OWNER_ROLE_ID=#ownerRoleId#
+</select>
+<select id="select_uniqueIMEIICCIDMSIDN" resultClass="com.maxis.db.TransServiceAttribute">
+select VALUE as headerValue,TRANS_MSID as transMsid,HEADER_NAME as headerName from PORTAL_TRANS_SERVICE_ATTRIBUTE where TRANS_MSID = #transMsid# and HEADER_NAME = #headerName#
+</select>
+ <select id="select_customerDetails" resultClass="com.maxis.db.CustomerInfo">
+select CUST_ID as custId,DEL_CONTACT_NAME as delContactName,BILL_STATE as billState,NEW_IC as newIc,PASSPORT_NO as passportNo,COMPANY_NAME as companyName,BILL_ADDR1 as billAddr1,BILL_ADDR2 as billAddr2,BILL_ADDR3 as billAddr3,BILL_POSTCODE as billPostcode,BILL_COUNTRY as billCountry,PIC_PHONE_NO as picPhoneNo,PIC_NAME as picName,DEL_CONTACT_PHONE_NO as delContactPhoneNo from PORTAL_CUST_INFO  where CUST_ID =#custId#
+</select>
+<select id="select_transWMAction" resultClass="com.maxis.db.PortalTransWMAction">
+select WM_ORDER_ID as wmOrderId from PORTAL_TRANS_WM_ACTION where WM_ORDER_ID=#wmOrderId#
+</select> 
+ <select id ="select_RegistrationDetails" resultClass="com.maxis.db.PortalRegistrationMaster" >
+select REG_ID as regId,REG_TYPE_ID as regTypeId,CUST_BRN_NO as custBrnNo,CUST_ID as custId,REG_TYPE as regType,REG_STATUS as regStatus,DEALER_CODE as dealerCode,SALESMEN_CODE as salesmenCode,SALESMEN_NAME as salesmenName,
+ACCOUNT_TYPE as accountType,PARENT_ID as parentId,HIER_ID as hireId,ACCT_CATEGORY as acctCategory,MARKET_CODE as marketCode,DATE_CREATED as dateCreated,
+REG_DATE_APPROVED as regDateApproved,CREATED_BY as createdBy,COLLECT_CODE as collectCode,ROLLUP_ID as rollupId,PROD_CAT_ID as prodCatId,
+PRODUCT_GROUP_ID as prodGrpId,ACCOUNT_NO as accountNo,ACCT_MGR_CODE as accMgrCode,APPL_REG_ID as applRegId,EAS_MASTER_REG_ID as easMasterRegId from portal_registration_master where REG_ID=#regId#
+</select>
+ <select id ="select_externalId" resultClass="com.maxis.db.TransMsisdn" >
+	SELECT RATEPLAN_ID as rateplanId,EXTERNAL_ID_TYPE as externalId from PORTAL_REF_RATEPLAN where RATEPLAN_ID=#rateplanId#
+</select>
+ <select id ="select_TransMsidnDetails" resultClass="com.maxis.db.TransMsisdn" >
+	SELECT TRANS_MSID as transMsid,REG_ID as regId,MSISDN_NO as mobileNo,SIM_NO as simNo,RATEPLAN_ID as ratePlanId,WS_STATUS as wsStatus,DATE_MODIFIED as dateModified FROM PORTAL_TRANS_MSISDN WHERE TRANS_MSID = #transMsid#
+</select>
+  <select id="select_dealerDetails" resultClass="com.maxis.db.Dealer">
+    SELECT SALES_CHANNEL_ID as salesChannelId,DEALER_CODE as dealerCode,DEALER_NAME as dealerName,USERID as userId from portal_ref_dealer where DEALER_CODE=#dealerCode#
+</select>
+  <select id="select_vasDetails" resultClass="com.maxis.db.TransVas">
+    select pt.REG_ID as regId,pt.TRANS_MSID as transMsid,pt.VAS_ID as vasId,pt.COMPONENT_ID as componentId,pt.PACKAGE_ID as packageId,pt.RATEPLAN_ID as rateplanId,pr.CONTRACT_TYPE as contractType from PORTAL_TRANS_VAS pt,PORTAL_REF_VAS pr where pr.VAS_ID=pt.VAS_ID and pt.TRANS_MSID=#transMsid#
+</select>
+ <select id="select_rateplanDetails" resultClass="com.maxis.db.PortalRefRatePlan">
+   select EMF_CONFIG_ID as emfConfigId,RATEPLAN_ID as ratePlanId,RATEPLAN as ratePlan from PORTAL_REF_RATEPLAN where RATEPLAN_ID=#ratePlanId#
+</select>
+ <select id="select_VasRefDetails" resultClass="com.maxis.db.VasRef">
+   select RATEPLAN_ID as rateplanId,COMPONENT_ID as componentId,PACKAGE_ID as packageId,CHARGE_TYPE_ID as chargeTypeId,VAS_ID as vasId from portal_ref_vas where RATEPLAN_ID=#rateplanId# and CHARGE_TYPE_ID is not null
+
+</select>
+<select id="select_portalrefchargeType" resultClass="com.maxis.db.PortalRefChargeType">
+select SP_COMPONENT as spComponent,CHARGE_TYPE_ID as chargeTypeID,CHARGE_TYPE_NAME as chargeTypeName from PORTAL_REF_CHARGE_TYPE where CHARGE_TYPE_ID=#chargeTypeID#
+</select>
+<select id="select_ChargeTypeDetails" resultClass="com.maxis.db.PortalRefVasChargeDetails">
+ select VAS_MONTHLY_AMT*100 as vasMonthlyAmount,CHARGE_TYPE_VALUE*100 as chargeTypeValue,ANNOTATION_2 as annotation,INSTALLMENT_DURATION as installmentDuration,MONTHLY_INSTALLMENT_AMOUNT*100 as monthlyInstallmentAmount,EXTENDED_DATA as extendedData,DELIVERY_PARTNER as deliveryPartner,DEVICE_ARTICLE_ID as deviceArticleId from PORTAL_REF_VAS_CHARGE_DETAILS where VAS_ID=#vasId#
+</select>
+<update id="update_PortalRegistrationMaster" parameterClass="com.maxis.db.PortalRegistrationMaster">
+     update PORTAL_REGISTRATION_MASTER set REG_STATUS=#regStatus#,DATE_MODIFIED=#dateModified# where REG_ID=#regId#
+</update>
+<select id="select_deviceDetails" resultClass="com.maxis.db.EasRefDevice">
+select distinct DEVICE_ID as deviceId,DEVICE_NAME as deviceName,DEVICE_ARTICLE_ID as deviceArticleId,DELIVERY_PARTNER as deliveryPartner from PORTAL_REF_EAS_DEVICE where DEVICE_ARTICLE_ID=#deviceArticleId# and DELIVERY_PARTNER=#deliveryPartner#
+</select>
+<select id="select_portalRefIdCountry" resultClass="com.maxis.db.PortalRefIddCountry">
+select pr.CORRIDOR_PLAN_ID as corridorPlanId,pr.POINT as point from PORTAL_REF_IDD_COUNTRY pr where pr.COUNTRY IN(select pt.IDD_COUNTRY from PORTAL_TRANS_PACKAGE_IDD pt where pt.TRANS_MSID=#transMsid#)
+</select>
+<select id="select_accMgrDealerCode" resultClass="com.maxis.db.AcctMgrRef">
+select DEALER_CODE as dealerCode,ACCT_MGR_ID as acctMgrId from ACCT_MGR_REF where ACCT_MGR_ID=#acctMgrId#
+</select>
+<select id="select_ratePlanId" resultClass="com.maxis.db.TransMsisdn">
+select RATEPLAN_ID as rateplanId,TRANS_MSID as transMsid from PORTAL_TRANS_MSISDN where TRANS_MSID=#transMsid#
+</select>
+<select id="select_customerId" resultClass="com.maxis.db.PortalRefRatePlanMap">
+select KEY_VALUE as keyValue,RATEPLAN_ID as ratePlanId,KEY_NAME as keyName from PORTAL_REF_RATEPLAN_MAP where RATEPLAN_ID=#ratePlanId# and KEY_NAME=#keyName#
+</select>
+<select id="select_IMEIICCID" resultClass="com.maxis.db.TransServiceAttribute">
+select VALUE as value,TRANS_MSID as transMsid,HEADER_NAME as headerName from PORTAL_TRANS_SERVICE_ATTRIBUTE where TRANS_MSID=#transMsid#  and HEADER_NAME=#headerName#
+</select>
+
+<insert id="insert_PortalTransWMActionIOT" parameterClass="com.maxis.db.PortalTransWMAction">
+       insert into PORTAL_TRANS_WM_ACTION (WM_ORDER_ID,REG_ID,TRANS_MSID,RETRY_COUNT,WM_ACTION_CODE,WM_TRIGGER_TIME,CHANNEL_ID,DATE_CREATED,DATE_MODIFIED,WM_STATUS,WM_STATUS_MSG)
+        values(#wmOrderId#,#regId#,#transMsid#,#retryCount#,#wmActionStatusCode#,#wmTriggerTime#,#channelId#,#dateCreated#,#dateModified#,#wmStatus#,#wmStatusMsg#)
+</insert>
+<update id="update_PortalTransMsisdnIOT" parameterClass="com.maxis.db.TransMsisdn">
+     update PORTAL_TRANS_MSISDN set WS_STATUS=#wsStatus#,ERR_MSG=#errMsg#,DATE_MODIFIED=#dateModified#,REG_ID=#regId# where TRANS_MSID=#transMsid#
+</update>
+<select id="select_TransMsisdnList" resultClass="com.maxis.db.TransMsisdn">
+select REG_ID as regId,TRANS_MSID as transMsid,WS_STATUS as wsStatus,NOTIFICATION_FLAG as notificationFlag from PORTAL_TRANS_MSISDN where REG_ID = #regId# and TRANS_MSID not like '%FLEXI_FUND_DEVICE_%' and TRANS_MSID not like '%Outright%'
+</select>
+<update id="update_PortalRegistrationMasterIOT" parameterClass="com.maxis.db.PortalRegistrationMaster">
+     update PORTAL_REGISTRATION_MASTER set REG_STATUS=#regStatus#,DATE_MODIFIED=#dateModified# where REG_ID=#regId#
+</update>
+<insert id="insert_PortalRegStatusIOT" parameterClass="com.maxis.db.PortalRegistrationStatus">
+
+        insert into PORTAL_REGISTRATION_STATUS (REG_STATUS_ID,REG_ID,CREATED_USER,DATE_CREATED,REMARKS,REG_STATUS)
+        values ( #regStatusId#,#regId#,#createUserId#, #dateCreated#, #remarks#,#regStatus#)
+</insert>
+<insert id="insert_AuditTrailIOT" parameterClass="com.maxis.db.AuditTrail">
+        insert into AUDIT_TRAIL (AUDIT_ID,REG_ID,ACCESS_BY,ACTIVITY,REMARKS,AUDIT_DATE)
+        values (#auditId#,#regId#,#accessBy#, #activity#, #remarks#,#auditDate#)
+</insert>
+
+</sqlMap>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MaxisEbdPortal">
+
+<select id="select_EbdPortalMims" resultClass="com.maxis.db.MaxisEbdPortal">
+    select t.reg_id as regId, t.trans_msid AS transMsid, t.msisdn_no AS msisdn, t.ext_contract as extContract from PORTAL_TRANS_MSISDN t where t.ext_contract is not NULL and t.ext_status = 'N'
+</select>
+
+<update id="update_ContractExt_Success" parameterClass="com.maxis.db.MaxisEbdPortal"   >
+     update PORTAL_TRANS_MSISDN set ext_status = 'S', ext_submit_date = sysdate where REG_ID = #regId# and TRANS_MSID = #transMsid#
+</update>
+
+<update id="update_ContractExt_Fail" parameterClass="com.maxis.db.MaxisEbdPortal"   >
+     update PORTAL_TRANS_MSISDN set ext_status = 'F', ext_submit_date = sysdate where REG_ID = #regId# and TRANS_MSID = #transMsid#
+</update>
+
+</sqlMap>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ThreeGpltStarPortal">
+
+
+    <update id="update_DeliveryConfirmation" parameterClass="com.maxis.db.PhoneOrder">
+        update PORTAL_TRANS_PHONE_ORDER set delivery_status_Id = #deliveryStatusId#, delivery_remark=#deliveryRemark#,
+        delivery_datetime= #deliveyDateTime#, IMEI=#imei#, DATE_MODIFIED = sysdate where ORDER_NO = #orderNo#
+    </update>
+
+    <update id="update_Delivered" parameterClass="com.maxis.db.PhoneOrder">
+        update PORTAL_TRANS_PHONE_ORDER set delivery_status_Id = #deliveryStatusId#, delivery_remark=#deliveryRemark#,
+        delivery_datetime= #deliveyDateTime#, DATE_MODIFIED = sysdate where ORDER_NO = #orderNo#
+    </update>
+
+    <update id="update_SalesConfirmation" parameterClass="com.maxis.db.PhoneOrder">
+        update PORTAL_TRANS_PHONE_ORDER set delivery_status_Id = #deliveryStatusId#, delivery_remark=#deliveryRemark#,
+        delivery_datetime= #deliveyDateTime#, DATE_MODIFIED = sysdate where ORDER_NO = #orderNo#
+    </update>
+
+    <select id="select_AUDIT_SEQ_NO" resultClass="com.maxis.db.AuditTrail">
+        select AUDIT_SEQ_NO.nextval as auditSeqNo from dual
+    </select>
+    <select id="select_reg_status_sequence" resultClass="com.maxis.db.PortalRegistrationStatus">
+        select PORTAL_REG_STATUS_SEQ_NO.nextval as regStatusSequence from dual
+    </select>
+
+    <insert id="insert_AuditTrail" parameterClass="com.maxis.db.AuditTrail">
+        insert into AUDIT_TRAIL (AUDIT_ID, REG_ID, ACCESS_BY, ACTIVITY, REMARKS, AUDIT_DATE, ORDER_NO)
+        values ( #auditId:NUMERIC#, #regId:NUMERIC#, #accessBy:VARCHAR#, #activity:VARCHAR#, #remarks:VARCHAR#,
+        #auditDate:TIMESTAMP#, #orderNo:NUMERIC#)
+    </insert>
+
+    <select id="select_PORTAL_TRANS_PHONE_ORDER_REG" resultClass="com.maxis.db.TransPhoneOrderReg">
+        SELECT REG_ID as regId, ORDER_NO as orderNo from PORTAL_TRANS_PHONE_ORDER_REG where ORDER_NO = #orderNo#
+    </select>
+    
+    <insert id="insert_mpos_reg_status_delivery" parameterClass="com.maxis.db.MaxisEbdPortal"   >
+    	insert into PORTAL_REGISTRATION_STATUS (reg_status_id, reg_id, reg_status, remarks, created_user, date_created) values (portal_reg_status_seq_no.nextval, #regId#, #status#, #remarks#, 'MIMS', sysdate)
+    </insert>
+    
+    <update id="update_mpos_trans_delivery" parameterClass="com.maxis.db.MaxisEbdPortal"   >
+      	update PORTAL_COMPANY_SUBSC_TRANS set STATUS = #status#, UPDATED_DATE = sysdate, UPDATED_BY = 'Mpos Batch' where REG_ID = #regId#
+    </update>
+    <insert id="insert_transwmaction" parameterClass="com.maxis.db.PortalTransWMAction">
+     insert into portal_trans_wm_action (wm_order_id,reg_id,wm_action_code,retry_count,channel_id,date_created,date_modified,wm_trigger_time) values (#wmOrderId#,#regId#,#wmActionStatusCode#,#retryCount#,#channelId#,#dateCreated#,#dateModified#,#wmTriggerTime#)
+    </insert>
+    	
+    <select id="select_portal_company_subsc_trans" resultClass="com.maxis.db.TransPhoneOrderReg">
+        SELECT TXNS.REG_ID as regId, REG.ORDER_NO as orderNo FROM PORTAL_COMPANY_SUBSC_TRANS TXNS, PORTAL_TRANS_PHONE_ORDER_REG REG WHERE TXNS.REG_ID = REG.REG_ID and REG.ORDER_NO = #orderNo#
+    </select>
+
+	<update id="update_TransMsisdn" parameterClass="com.maxis.db.TransMsisdn">
+		update PORTAL_TRANS_MSISDN set DELIVERY_DATE=sysdate,DELIVERY_STATUS='Completed' where TRANS_MSID = #transMsid#
+	</update>
+
+</sqlMap>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PhoneOrder">
+    <select id="select_RoadShow_details" resultClass="com.maxis.db.MaxisEbdPortal">
+        SELECT DISTINCT phoneorder2_.Order_NO AS orderNo, this_.REG_ID AS regId, this_.CUST_ID AS custId, this_.CUST_BRN_NO AS custBrn,
+        this_.REG_DATE_APPROVED AS regDateApproved, transmsisd4_.ONSITE_FULLFILLMENT AS onSiteFullfillment,
+        transmsisd4_.IDD_ERR_MSG AS iddErrMsg, phoneorder3_.SALES_ID as salesId, phoneorder3_.EXT_SALES_ID as extSalesId,
+        (SELECT a.DEALER_NAME FROM PORTAL_REF_DEALER a WHERE a.DEALER_CODE = this_.DEALER_CODE) AS dealerName,
+        customerin1_.COMPANY_NAME AS companyName, phoneorder3_.PHONE_TOPUP_AMOUNT AS topupAmount,
+        customerin1_.CUSTNAME AS custName,
+        customerin1_.new_ic AS newIc,
+        transmsisd4_.TRANS_MSID AS transMsid, SUBSTR(phoneorder3_.VERIFIED_REMARK, 0, 250) as verifiedRemark,
+        transmsisd4_.BILL_ADDR1 AS billAdd1,
+        transmsisd4_.BILL_ADDR2 AS billAdd2,
+        transmsisd4_.BILL_ADDR3 AS billAdd3,
+        transmsisd4_.BILL_STATE AS billState,
+        transmsisd4_.BILL_POSTCODE AS billPostcode,
+        transmsisd4_.BILL_COUNTRY AS billCountry,
+        LENGTH(phoneorder3_.DEL_ADDR1) AS del1Length,
+        LENGTH(phoneorder3_.DEL_ADDR2) AS del2Length,
+        phoneorder3_.DEL_ADDR1 AS delAdd1,
+        phoneorder3_.DEL_ADDR2 AS delAdd2,
+        phoneorder3_.DEL_ADDR3 AS delAdd3,
+        phoneorder3_.DEL_COUNTRY AS delCountry,
+        phoneorder3_.DEL_STATE AS delState,
+        phoneorder3_.DEL_POSTCODE AS delPostcode,
+        phoneorder3_.DEL_COUNTRY AS delCountry,
+        phoneorder3_.PHONE_SUBSIDY_AMOUNT AS phoneSubsidyAmount,
+        customerin1_.DEL_CONTACT_NAME AS delContactName,
+        customerin1_.DEL_CONTACT_IC AS delContactIc,
+        customerin1_.DEL_CONTACT_PHONE_NO AS delContactPhoneNo,
+        refDeviceName_.MIMS_DEVICE_ID AS mimsDeviceId, refDeviceName_.MIMS_COLOR_ID AS mimsColorId,
+        (SELECT DISTINCT  a.PHONE_STATUS_NAME FROM PORTAL_REF_PHONE_STATUS a WHERE a.PHONE_STATUS_ID = phoneorder3_.delivery_status_Id) AS phoneOrderStatus,
+        phoneorder3_.Device_Id AS deviceId,
+        this_.REG_TYPE AS regType,
+        transmsisd4_.msisdn_no AS msisdn, transmsisd4_.promotion_id AS promoId,
+        (SELECT ms.account_no  FROM PORTAL_TRANS_MSISDN ms WHERE ms.reg_id = this_.reg_id AND ms.trans_msid = phoneorder3_.trans_msid) AS accountNo,
+        phoneorder3_.CREATE_REMARK AS createRemarks, phoneorder3_.PHONE_UNIT_PRICE AS unitPrice, phoneorder3_.imei AS imei,
+        rateplanRef.rateplan AS rateplan, rateplanRef.RATEPLAN_COMPONENT_ID AS rateplanComponentId, rateplanRef.RATEPLAN_PENALTY_COMPONENT_ID AS rateplanPenaltyComponentId,
+        refDeviceName_.device_name AS deviceName,
+        (SELECT a.NAME FROM EBD_REF_MARKET a WHERE a.market_id=transmsisd4_.market_id) AS marketType
+        FROM PORTAL_REGISTRATION_MASTER this_, PORTAL_CUST_INFO customerin1_, PORTAL_TRANS_PHONE_ORDER_REG phoneorder2_,
+        PORTAL_TRANS_PHONE_ORDER phoneorder3_, PORTAL_TRANS_MSISDN transmsisd4_, PORTAL_REF_RATEPLAN rateplanRef, PORTAL_REF_DEVICE_NAME refDeviceName_
+        WHERE this_.CUST_ID=customerin1_.CUST_ID AND this_.REG_ID=phoneorder2_.REG_ID
+        AND phoneorder2_.Order_NO=phoneorder3_.Order_NO
+        AND this_.REG_ID=transmsisd4_.reg_id
+        AND  transmsisd4_.TRANS_MSID = phoneorder3_.TRANS_MSID
+        AND (phoneorder3_.vendor_Id=7 AND transmsisd4_.ONSITE_FULLFILLMENT='Y')
+        AND phoneorder3_.delivery_status_Id=7
+        AND this_.REG_STATUS='A'
+        AND transmsisd4_.rateplan_id = rateplanRef.rateplan_id
+        AND phoneorder3_.device_id = refDeviceName_.device_id
+        AND phoneorder3_.MIMS_STATUS IS NULL
+        AND transmsisd4_.created_by='RoadShow3PLServlet'
+        AND transmsisd4_.market_id IN (33, 43, 44, 38)
+        ORDER BY this_.reg_id DESC
+    </select>
+
+    <update id="update_RoadshowMimsSuccess" parameterClass="com.maxis.db.MaxisEbdPortal"   >
+         update PORTAL_TRANS_PHONE_ORDER set MIMS_STATUS = 'Y', MIMS_SUBMIT_DATE = sysdate, DELIVERY_STATUS_ID = 1, DELIVERY_DATETIME = sysdate, DATE_MODIFIED = sysdate where ORDER_NO = #orderNo#
+    </update>
+
+    <update id="update_RoadshowMimsSuccess_N" parameterClass="com.maxis.db.MaxisEbdPortal"   >
+         update PORTAL_TRANS_PHONE_ORDER set MIMS_STATUS = 'N', MIMS_SUBMIT_DATE = sysdate, DATE_MODIFIED = sysdate where ORDER_NO = #orderNo#
+    </update>
+
+    <update id="update_RoadshowMimsSuccess_H" parameterClass="com.maxis.db.MaxisEbdPortal"   >
+         update PORTAL_TRANS_PHONE_ORDER set MIMS_STATUS = 'H', MIMS_SUBMIT_DATE = sysdate, DATE_MODIFIED = sysdate where ORDER_NO = #orderNo#
+    </update>
+
+
+
+</sqlMap>
